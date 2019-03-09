@@ -1,10 +1,13 @@
 workflow "deploy" {
   on = "push"
-  resolves = ["deploy firebase"]
+  resolves = [
+    "deploy firebase",
+  ]
 }
 
 action "elm build" {
   uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
+  needs = ["elm install"]
   args = "run build --prefix my-app"
 }
 
@@ -13,4 +16,9 @@ action "deploy firebase" {
   needs = ["elm build"]
   args = "deploy"
   secrets = ["FIREBASE_TOKEN"]
+}
+
+action "elm install" {
+  uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
+  args = "install --prefix my-app"
 }
